@@ -36,8 +36,9 @@ class Submit extends Component {
                      Vorname - ${this.props.form.person_name},
                      Nachname - ${this.props.form.person_surname},
                      Email - ${this.props.form.email},
-                     Telefon - ${this.props.form.telephone}`)
+                     Telefon - ${this.props.form.telephone}`);
 
+        this.props.formSubmit();
     }
 
     render() {
