@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Communications from 'react-native-communications';
@@ -9,22 +9,44 @@ import { formSubmit } from '../actions';
 
 class Submit extends Component {
 
+    constructor(){
+        super();
+        this._submit = this._submit.bind(this);
+    }
+
+    _submit(){
+        for(item in this.props.form){
+            if(this.props.form[item] == ''){
+                Alert.alert(
+                    'Error',
+                    'All fields must be filed',
+                    [{text: 'Ok', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}],
+                    { cancelable: false }
+                )
+                return
+            }
+        }
+
+        Communications.email(['mp@hejfish.com'],null,null,'Your Register Form ',
+                    `Name des Bewirtschafters - ${this.props.form.name},
+                     Straße - ${this.props.form.street},
+                     Postleitzahl - ${this.props.form.postIndex},
+                     Ort - ${this.props.form.place},
+                     Land - ${this.props.form.country},
+                     Vorname - ${this.props.form.person_name},
+                     Nachname - ${this.props.form.person_surname},
+                     Email - ${this.props.form.email},
+                     Telefon - ${this.props.form.telephone}`)
+
+    }
+
     render() {
 
         const { buttonStyle } = styles;
 
         return(
             <View style={buttonStyle}>
-                <Button onPress={() => Communications.email(['mp@hejfish.com'],null,null,'Your Register Form ',
-                    `Name des Bewirtschafters - ${this.props.name},
-                     Straße - ${this.props.street},
-                     Postleitzahl - ${this.props.postIndex},
-                     Ort - ${this.props.place},
-                     Land - ${this.props.country},
-                     Vorname - ${this.props.person_name},
-                     Nachname - ${this.props.person_surname},
-                     Email - ${this.props.email},
-                     Telefon - ${this.props.telephone}`)}>
+                <Button onPress={this._submit}>
                     JETZT REGISTRIEREN UND ANGELKARTE ANSEHEN
                 </Button>
             </View>
@@ -47,8 +69,8 @@ Submit.propTypes = {
 }
 
 const mapStateToProps = state => {
-    const { name, street, postIndex, place, country, person_name, person_surname, email, telephone } = state.registerForm;
-    return { name, street, postIndex, place, country, person_name, person_surname, email, telephone }
+    const form = state.registerForm;
+    return { form }
 }
 
 const styles = StyleSheet.create({
